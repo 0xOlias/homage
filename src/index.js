@@ -1,6 +1,6 @@
 const drawSquare = (coords, params, context) => {
   const { parentTopLeftX, parentTopLeftY, parentSideLength } = coords;
-  const { centerX, centerY, step, tension, deviation } = params;
+  const { centerX, centerY, step, tension } = params;
 
   let topLeftX;
   let topLeftY;
@@ -9,9 +9,10 @@ const drawSquare = (coords, params, context) => {
   let s = Math.random() * 100;
   let l = Math.random() * 100;
   let m = centerY / centerX;
+  let deviation = Math.random() * 15;
 
-  topLeftX = parentTopLeftX + step + deviation;
-  topLeftY = topLeftX * m + deviation;
+  topLeftX = parentTopLeftX + step - deviation;
+  topLeftY = topLeftX * m - deviation;
   sideLength = parentSideLength * 0.8;
 
   console.log("bout to draw", {
@@ -49,35 +50,40 @@ const drawSquare = (coords, params, context) => {
   );
 };
 
-const draw = () => {
-  const context = document.getElementById("c").getContext("2d");
+const drawInitialSquare = (params, context) => {
+  const { maxSideLength } = params;
 
-  // get params, some random
-  const params = {
-    centerX: 150 + Math.random() * 340,
-    centerY: 150 + Math.random() * 340,
-    step: 20 + Math.random() * 55,
-    tension: 15 + Math.random() * 15,
-    deviation: Math.random() * 10,
-  };
-
-  topLeftX = 0;
-  topLeftY = 0;
-  sideLength = 640;
+  let topLeftX = 0;
+  let topLeftY = 0;
   let h = Math.random() * 360;
   let s = 10 + Math.random() * 55;
   let l = 35 + Math.random() * 35;
 
   context.fillStyle = `hsl(${h}, ${s}%, ${l}%)`;
-  context.fillRect(topLeftX, topLeftY, sideLength, sideLength);
+  context.fillRect(topLeftX, topLeftY, maxSideLength, maxSideLength);
 
-  const coords = {
+  return {
     parentTopLeftX: topLeftX,
     parentTopLeftY: topLeftY,
-    parentSideLength: sideLength,
+    parentSideLength: maxSideLength,
+  };
+};
+
+const draw = () => {
+  const canvas = document.getElementById("c");
+  const context = canvas.getContext("2d");
+
+  const params = {
+    maxSideLength: 640,
+    centerX: 150 + Math.random() * 340,
+    centerY: 150 + Math.random() * 340,
+    step: 20 + Math.random() * 55,
+    tension: 15 + Math.random() * 15,
+    // deviation: Math.random() * 10,
   };
 
-  // start recursive shit
+  const coords = drawInitialSquare(params, context);
+
   drawSquare(coords, params, context);
 };
 
